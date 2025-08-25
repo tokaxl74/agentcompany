@@ -1,0 +1,67 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks: [agent_net]
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n:latest
+    environment:
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - WEBHOOK_URL=https://${N8N_HOST}/
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - GENERIC_TIMEZONE=Europe/Moscow
+    depends_on: [postgres]
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks: [agent_net]
+    restart: unless-stopped
+
+  agent:
+    image: tiangolo/uvicorn-gunicorn-fastapi:python3.11
+    volumes:
+      - ./agent_app:/app
+    networks: [agent_net]
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    environment:
+      - EMAIL=${LETSENCRYPT_EMAIL}
+      - AGENT_HOST=${AGENT_HOST}
+      - N8N_HOST=${N8N_HOST}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - agent
+      - n8n
+    networks: [agent_net]
+    restart: unless-stopped
+
+networks:
+  agent_net: {}
+
+volumes:
+  pgdata: {}
+  n8n_data: {}
+  caddy_data: {}
+  caddy_config: {}
