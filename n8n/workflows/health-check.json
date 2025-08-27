@@ -1,0 +1,54 @@
+{
+  "name": "Health Check (manual)",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fbdd118e-79d9-41cf-8477-b299a3ed247f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://agent.91.240.254.122.nip.io/healthz",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0a370ad7-ca4b-4902-b810-31b5c8afd7c9",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5e3b58c1-0b66-40dd-b20d-9c2afc9854d8",
+  "meta": {
+    "instanceId": "176459fc4775d1cdb5be2ee3fe189208c803efcf78150c26ea4833e0251b2724"
+  },
+  "id": "6pJhKWqkJb7XrlVI",
+  "tags": []
+}

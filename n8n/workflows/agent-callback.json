@@ -1,0 +1,209 @@
+{
+  "name": "Telegram Agent Callback",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://agent.91.240.254.122.nip.io/healthz",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        192,
+        64
+      ],
+      "id": "4f633bb3-5e0e-46a8-a2f6-e7c3b5f2f04e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chat_id * 1}}",
+        "text": "=Ваш ответ: {{$node[\"TG Callback\"].json.callback_query.data}}\nАгент: {{$json.ok ?? (JSON.parse($json.body || \"{}\").ok ?? \"нет ответа\")}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        976,
+        32
+      ],
+      "id": "c295bf48-2f83-4a26-b824-04216012a5f5",
+      "name": "Send a text message",
+      "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -192,
+        -64
+      ],
+      "id": "f3884397-b42e-43af-a1be-a7bf73251587",
+      "name": "TG Callback",
+      "webhookId": "38f2be84-1222-4f9e-b87c-ca2d3b3714b9",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{$json[\"callback_query\"][\"id\"]}}",
+        "additionalFields": {
+          "show_alert": false,
+          "text": "✅ Принято"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        16,
+        272
+      ],
+      "id": "f1a767ba-0405-4fc6-9c43-93b135ef9317",
+      "name": "Answer Query a callback",
+      "webhookId": "e41d3612-334a-4ec7-a7f3-43c7374c54af",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ad45500-0ad7-4939-99fe-0ca8f830ee0e",
+              "name": "chat_id",
+              "value": "={{$json.callback_query.message.chat.id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        176,
+        -304
+      ],
+      "id": "3608051c-a0d9-4e95-8445-7aa32fb47075",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        608,
+        -48
+      ],
+      "id": "37c52be9-8d83-4047-b03e-e8f631f03cbb",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "TG Callback": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Answer Query a callback",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query a callback": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e5af7191-bdc6-4f8a-9240-8462107e84a7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "176459fc4775d1cdb5be2ee3fe189208c803efcf78150c26ea4833e0251b2724"
+  },
+  "id": "RpzJDTQeC3d7MOUC",
+  "tags": []
+}
