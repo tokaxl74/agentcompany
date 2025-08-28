@@ -6,6 +6,26 @@ import urllib.error as e
 
 app = FastAPI(title="Agent Executor", version="0.8.0")
 
+from datetime import datetime
+import os
+
+STARTED_AT = globals().get("STARTED_AT") or datetime.utcnow().isoformat() + "Z"
+globals()["STARTED_AT"] = STARTED_AT
+
+@app.get("/status")
+def status():
+    return {
+        "service": "agent-executor",
+        "version": app.version if hasattr(app, "version") else "unknown",
+        "started_at": STARTED_AT,
+        "endpoints": ["/healthz", "/status", "/create_issue", "/gen_text"],
+        "env": {
+            "GITHUB_TOKEN_set": bool(os.environ.get("GITHUB_TOKEN")),
+            "OPENAI_API_KEY_set": bool(os.environ.get("OPENAI_API_KEY")),
+        }
+    }
+
+
 @app.get("/healthz")
 def healthz():
     return {"ok": True}
@@ -33,6 +53,9 @@ def create_issue(p: CreateIssuePayload, request: Request):
     header_tok = auth.split(" ",1)[1] if auth.lower().startswith("bearer ") else ""
     body_tok = p.token or ""
     safe_token = _normalize_token(header_tok or body_tok)
+    if not safe_token:
+        env_tok = (os.environ.get("GITHUB_TOKEN", "").strip())
+        safe_token = _normalize_token(env_tok)
     url = f"https://api.github.com/repos/{p.repo_full_name}/issues"
     payload = json.dumps({"title": p.title, "body": (p.body or "")}).encode("utf-8")
     req = u.Request(url, data=payload, method="POST")

@@ -1,16 +1,12 @@
-# Handoff — Telegram Callback → Agent → GitHub/LLM
+# Handoff — Agent endpoints (update)
 
-## Готово
-- /create_issue (GitHub, PAT через Authorization: Bearer)
-- /gen_text (OpenAI, ключ через Authorization: Bearer или OPENAI_API_KEY)
-- n8n: ✅ approve → issue + ссылка; 🔍 check_healthz → ответ LLM; ❌ reject → отменено
-- Answer Query a callback снимает крутилку для всех кнопок
+## Эндпоинты
+- GET /healthz — {"ok": true}
+- GET /status — сервис/версия/аптайм/наличие ключей
+- POST /create_issue — GitHub Issues, токен берётся из Authorization: Bearer или из ENV GITHUB_TOKEN (fallback)
+- POST /gen_text — OpenAI Chat Completions, ключ берётся из Authorization: Bearer или из ENV OPENAI_API_KEY (fallback)
 
-## Чек-лист проверки
-1) GET /healthz → {"ok": true}
-2) POST /create_issue (через n8n кнопку ✅) → приходит ссылка на issue
-3) POST /gen_text (через кнопку 🔍) → короткий ответ модели
-
-## Дальше (последовательные шаги)
-- Вынести ключи в ENV: GITHUB_TOKEN, OPENAI_API_KEY (n8n/agent)
-- Добавить /deploy_app или /gen_code (следующий инкремент агента)
+## Проверка
+1) curl -sS https://agent.<домен>/status
+2) /create_issue вызывается из n8n без токена — берётся из ENV
+3) /gen_text вызывается из n8n без токена — берётся из ENV
