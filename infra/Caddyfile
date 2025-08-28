@@ -1,11 +1,9 @@
-{
-    email alcryptobol@gmail.com
-}
-
-agent.91.240.254.122.nip.io {
-    reverse_proxy agent:80
-}
-
-n8n.91.240.254.122.nip.io {
+# n8n по двум доменам: старый nip.io и новый alcryptan.online
+n8n.91.240.254.122.nip.io, n8n.alcryptan.online {
     reverse_proxy n8n:5678
+}
+
+# агент по двум доменам (если нужно)
+agent.91.240.254.122.nip.io, agent.alcryptan.online {
+    reverse_proxy agent:80
 }
