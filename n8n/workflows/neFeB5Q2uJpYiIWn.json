@@ -1,0 +1,248 @@
+{
+  "createdAt": "2025-08-27T08:04:34.640Z",
+  "updatedAt": "2025-08-28T05:10:28.530Z",
+  "id": "neFeB5Q2uJpYiIWn",
+  "name": "Ask LLM",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6647bf06-782e-4c2b-8be8-5d9f0cf54965",
+      "name": "Telegram Trigger",
+      "webhookId": "4d2ede33-5eae-4d74-9f8b-d2df6a6bab4b",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e663f77e-5cff-4a4a-823b-6d1117ef93a2",
+              "leftValue": "={{$json[\"message\"][\"text\"]}}",
+              "rightValue": "^\\/ask\\s+.+",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "b2c86dec-f636-4a36-9013-ac4c84e194ab",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "debc97db-afd1-4e22-9fe0-e6ae57cc06a5",
+              "name": "chat_id",
+              "value": "={{$json.message.chat.id}}",
+              "type": "string"
+            },
+            {
+              "id": "ac5ad610-fbc6-459f-a10d-5e7cd59cc684",
+              "name": "prompt",
+              "value": "={{$json.message.text.replace(/^\\/ask\\s+/,'').trim()}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        -96
+      ],
+      "id": "48bb05df-49fd-4b74-8398-a874a6fe33ea",
+      "name": "Extract"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agent.91.240.254.122.nip.io/gen_text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"={{$json.prompt}}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 300,\n  \"temperature\": 0.2\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        -96
+      ],
+      "id": "50614362-9adc-41fe-9867-76c4b5cf0b20",
+      "name": "LLM Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"] }}\n",
+        "text": "={{$json.text || '—'}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "a6eeae3b-b208-4832-9dd0-0793e1245fb4",
+      "name": "Send a text message",
+      "webhookId": "c02a716d-188a-4f43-a806-8e8453a64085",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.message.chat.id}}",
+        "text": "=Напиши: /ask твой вопрос",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        160
+      ],
+      "id": "92a951ea-0856-41b5-8332-1cbded04c8bf",
+      "name": "Send a text message1",
+      "webhookId": "c02a716d-188a-4f43-a806-8e8453a64085",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Extract",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract": {
+      "main": [
+        [
+          {
+            "node": "LLM Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "3e78e005-9a34-493a-b4a1-8f35f058f40c",
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-27T08:04:34.640Z",
+      "updatedAt": "2025-08-27T08:04:34.640Z",
+      "role": "workflow:owner",
+      "workflowId": "neFeB5Q2uJpYiIWn",
+      "projectId": "pCgHNIJvBAytQqU5",
+      "project": {
+        "createdAt": "2025-08-24T15:29:26.548Z",
+        "updatedAt": "2025-08-28T10:55:47.860Z",
+        "id": "pCgHNIJvBAytQqU5",
+        "name": "Алексей Косенков <azon_ooo@mail.ru>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}

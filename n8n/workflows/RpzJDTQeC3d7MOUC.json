@@ -1,0 +1,589 @@
+{
+  "createdAt": "2025-08-25T09:50:36.483Z",
+  "updatedAt": "2025-08-28T11:43:43.043Z",
+  "id": "RpzJDTQeC3d7MOUC",
+  "name": "Telegram Agent Callback",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agent.91.240.254.122.nip.io/create_issue",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: задача от агента\",\n  \"body\": \"Подтверждено кнопкой ✅ в Telegram\"\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -960,
+        -224
+      ],
+      "id": "4f633bb3-5e0e-46a8-a2f6-e7c3b5f2f04e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1744,
+        -160
+      ],
+      "id": "f3884397-b42e-43af-a1be-a7bf73251587",
+      "name": "TG Callback",
+      "webhookId": "38f2be84-1222-4f9e-b87c-ca2d3b3714b9",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{$json[\"callback_query\"][\"id\"]}}",
+        "additionalFields": {
+          "show_alert": false,
+          "text": "✅ Принято"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1744,
+        208
+      ],
+      "id": "f1a767ba-0405-4fc6-9c43-93b135ef9317",
+      "name": "Answer Query a callback",
+      "webhookId": "e41d3612-334a-4ec7-a7f3-43c7374c54af",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4ad45500-0ad7-4939-99fe-0ca8f830ee0e",
+              "name": "chat_id",
+              "value": "={{$json.callback_query.message.chat.id}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        -400
+      ],
+      "id": "3608051c-a0d9-4e95-8445-7aa32fb47075",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {
+          "includeUnpaired": true
+        }
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -704,
+        -384
+      ],
+      "id": "37c52be9-8d83-4047-b03e-e8f631f03cbb",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.chat_id}}",
+        "text": "=✅ Задача создана: {{$json.html_url || '—'}}\n\n",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        -336
+      ],
+      "id": "9498e679-3c48-4dc7-8f03-467847e0c491",
+      "name": "Send a text message1",
+      "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f89ea19f-8bca-4a38-981d-b09da217a339",
+              "name": "html_url",
+              "value": "={{ $json.body?.html_url || $json.html_url || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -720,
+        -208
+      ],
+      "id": "c14826c2-4794-4255-bd39-f69c5c6ef1ca",
+      "name": "Pick link"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c72bc0bb-bdcb-4bdf-81e3-2d404b935602",
+              "leftValue": "={{$json.callback_query?.data}}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1248,
+        -320
+      ],
+      "id": "b427ccb5-65f3-4c0b-91b7-826a08d1cedd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"TG Callback\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"] }}\n",
+        "text": "={{$json.text || '—'}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -544,
+        272
+      ],
+      "id": "38ff9d37-8201-4859-a467-886acedfdc69",
+      "name": "Send a text message",
+      "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agent.91.240.254.122.nip.io/gen_text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"prompt\": \"Скажи коротко: агент подключён и отвечает?\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 60,\n  \"temperature\": 0.2\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -512,
+        0
+      ],
+      "id": "97dedee8-43ae-4aa5-b30e-4b2c0f2a8995",
+      "name": "LLM Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5f0fd090-c46e-4576-9ec5-1192b5abe582",
+              "leftValue": "={{$json.callback_query.data}}",
+              "rightValue": "check_healthz",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -832,
+        16
+      ],
+      "id": "41845b22-5e83-4026-8dd8-5e50cee3f7da",
+      "name": "check_healthz"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"TG Callback\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "❌ Действие отменено",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -896,
+        256
+      ],
+      "id": "70ee96e9-b67e-4672-a4bf-7fed46947a67",
+      "name": "Send reject message",
+      "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8f09b834-e937-490c-ae18-a2b170225cc8",
+              "leftValue": "{{$json.callback_query.data}}",
+              "rightValue": "deploy",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1536,
+        32
+      ],
+      "id": "02380a0c-e911-4e33-9ded-5e1bd113533e",
+      "name": "if_deploy"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://agent.91.240.254.122.nip.io/deploy_app",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Deploy-Secret",
+              "value": "CHANGE_ME_DEPLOY_123"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"ref\": \"main\",\n  \"path\": \"~/agentcompany_sync\",\n  \"restart\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1360,
+        -80
+      ],
+      "id": "5beb9939-1edf-4fec-a6b9-4243f5b5c001",
+      "name": "Deploy Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$node[\"TG Callback\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+        "text": "♻️ Deploy: {{$json.ok ? 'ok' : 'fail'}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1216,
+        96
+      ],
+      "id": "22b48d7d-96e8-43bb-9e78-67c9054624c1",
+      "name": "Send deploy result",
+      "webhookId": "fd40ae4d-4eb1-4c6d-ac48-fa1bd50cc5b6",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Pick link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG Callback": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Answer Query a callback",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "if_deploy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Query a callback": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        []
+      ]
+    },
+    "Pick link": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "check_healthz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LLM Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check_healthz": {
+      "main": [
+        [
+          {
+            "node": "LLM Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send reject message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "if_deploy": {
+      "main": [
+        [
+          {
+            "node": "Deploy Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deploy Request": {
+      "main": [
+        [
+          {
+            "node": "Send deploy result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "4d6e0542-6c84-4392-ab6e-625bae7bddc4",
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-25T09:50:36.483Z",
+      "updatedAt": "2025-08-25T09:50:36.483Z",
+      "role": "workflow:owner",
+      "workflowId": "RpzJDTQeC3d7MOUC",
+      "projectId": "pCgHNIJvBAytQqU5",
+      "project": {
+        "createdAt": "2025-08-24T15:29:26.548Z",
+        "updatedAt": "2025-08-28T10:55:47.860Z",
+        "id": "pCgHNIJvBAytQqU5",
+        "name": "Алексей Косенков <azon_ooo@mail.ru>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}

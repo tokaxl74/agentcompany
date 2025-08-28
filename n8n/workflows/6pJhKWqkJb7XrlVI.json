@@ -1,0 +1,75 @@
+{
+  "createdAt": "2025-08-25T08:41:23.236Z",
+  "updatedAt": "2025-08-25T10:43:04.654Z",
+  "id": "6pJhKWqkJb7XrlVI",
+  "name": "Health Check (manual)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fbdd118e-79d9-41cf-8477-b299a3ed247f",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://agent.91.240.254.122.nip.io/healthz",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0a370ad7-ca4b-4902-b810-31b5c8afd7c9",
+      "name": "HTTP Request"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "5e3b58c1-0b66-40dd-b20d-9c2afc9854d8",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-25T08:41:23.236Z",
+      "updatedAt": "2025-08-25T08:41:23.236Z",
+      "role": "workflow:owner",
+      "workflowId": "6pJhKWqkJb7XrlVI",
+      "projectId": "pCgHNIJvBAytQqU5",
+      "project": {
+        "createdAt": "2025-08-24T15:29:26.548Z",
+        "updatedAt": "2025-08-28T10:55:47.860Z",
+        "id": "pCgHNIJvBAytQqU5",
+        "name": "Алексей Косенков <azon_ooo@mail.ru>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}

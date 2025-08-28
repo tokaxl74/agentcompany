@@ -1,0 +1,120 @@
+{
+  "createdAt": "2025-08-25T09:27:57.655Z",
+  "updatedAt": "2025-08-25T10:43:29.910Z",
+  "id": "pJxOmVJCifZK6f1u",
+  "name": "Agent Callback Handler",
+  "active": false,
+  "isArchived": true,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://agent.91.240.254.122.nip.io/healthz",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "636df9bf-4e84-4aa6-94e1-8969ca38409a",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$items(0,\"TG Callback\").json.callback_query.message.chat.id}}",
+        "text": "={{$items(0,\"TG Callback\").json.callback_query.message.chat.id}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "906a9ba8-e0d1-4454-80ec-6fa161ee431f",
+      "name": "Send a text message",
+      "webhookId": "cd62b71a-ba94-4884-b851-09f4d3eb7ce8",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f4042a3d-eb75-4cc0-8455-44bda873abf2",
+      "name": "TG Callback",
+      "webhookId": "3d4f6858-319b-465b-ab86-2f97931daab1",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG Callback": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "fccf4597-17e8-4fa9-aedd-67e889bb09ab",
+  "triggerCount": 1,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-25T09:27:57.655Z",
+      "updatedAt": "2025-08-25T09:27:57.655Z",
+      "role": "workflow:owner",
+      "workflowId": "pJxOmVJCifZK6f1u",
+      "projectId": "pCgHNIJvBAytQqU5",
+      "project": {
+        "createdAt": "2025-08-24T15:29:26.548Z",
+        "updatedAt": "2025-08-28T10:55:47.860Z",
+        "id": "pCgHNIJvBAytQqU5",
+        "name": "Алексей Косенков <azon_ooo@mail.ru>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}

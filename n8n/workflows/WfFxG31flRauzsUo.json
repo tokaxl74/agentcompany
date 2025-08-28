@@ -1,0 +1,150 @@
+{
+  "createdAt": "2025-08-28T12:44:54.593Z",
+  "updatedAt": "2025-08-28T12:44:54.593Z",
+  "id": "WfFxG31flRauzsUo",
+  "name": "My workflow",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {
+          "userIds": "1215909770"
+        }
+      },
+      "id": "680954e6-89d3-4434-b90c-1be9c5817591",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        -240
+      ],
+      "webhookId": "0dc596a9-f28e-455e-81df-21a7990de868",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.message.chat.id}}",
+        "text": "Привет, я тебя слышу 👋",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Одобрить",
+                    "additionalFields": {
+                      "callback_data": "approve"
+                    }
+                  },
+                  {
+                    "text": "🔍 Проверить агент /healthz",
+                    "additionalFields": {
+                      "callback_data": "check_healthz"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "❌ Отклонить",
+                    "additionalFields": {
+                      "callback_data": "reject"
+                    }
+                  },
+                  {
+                    "text": "🧠 Ask LLM",
+                    "additionalFields": {
+                      "callback_data": "ask"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "♻️ Deploy",
+                    "additionalFields": {
+                      "callback_data": "deploy"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "10e23466-febd-420e-83d3-08e2af519b66",
+      "name": "Send a text message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        -240
+      ],
+      "webhookId": "d28e0707-269f-4915-b4b2-d420dbfa860e",
+      "credentials": {
+        "telegramApi": {
+          "id": "hzifiBqJyBYncbJg",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "ab2eb99c-f432-4a85-9bb2-e031b54e4af7",
+  "triggerCount": 0,
+  "tags": [],
+  "shared": [
+    {
+      "createdAt": "2025-08-28T12:44:54.593Z",
+      "updatedAt": "2025-08-28T12:44:54.593Z",
+      "role": "workflow:owner",
+      "workflowId": "WfFxG31flRauzsUo",
+      "projectId": "pCgHNIJvBAytQqU5",
+      "project": {
+        "createdAt": "2025-08-24T15:29:26.548Z",
+        "updatedAt": "2025-08-28T10:55:47.860Z",
+        "id": "pCgHNIJvBAytQqU5",
+        "name": "Алексей Косенков <azon_ooo@mail.ru>",
+        "type": "personal",
+        "icon": null,
+        "description": null
+      }
+    }
+  ]
+}
