@@ -1,0 +1,4125 @@
+[
+  {
+    "createdAt": "2025-08-25T08:41:23.236Z",
+    "updatedAt": "2025-08-25T10:43:04.654Z",
+    "id": "6pJhKWqkJb7XrlVI",
+    "name": "Health Check (manual)",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "fbdd118e-79d9-41cf-8477-b299a3ed247f",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "url": "https://agent.91.240.254.122.nip.io/healthz",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "0a370ad7-ca4b-4902-b810-31b5c8afd7c9",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "5e3b58c1-0b66-40dd-b20d-9c2afc9854d8",
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.664Z",
+        "updatedAt": "2025-08-28T17:29:31.664Z",
+        "role": "workflow:owner",
+        "workflowId": "6pJhKWqkJb7XrlVI",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-25T09:50:36.483Z",
+    "updatedAt": "2025-08-28T11:43:43.043Z",
+    "id": "RpzJDTQeC3d7MOUC",
+    "name": "Telegram Agent Callback",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/create_issue",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: задача от агента\",\n  \"body\": \"Подтверждено кнопкой ✅ в Telegram\"\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -960,
+          -224
+        ],
+        "id": "4f633bb3-5e0e-46a8-a2f6-e7c3b5f2f04e",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "callback_query"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -1744,
+          -160
+        ],
+        "id": "f3884397-b42e-43af-a1be-a7bf73251587",
+        "name": "TG Callback",
+        "webhookId": "38f2be84-1222-4f9e-b87c-ca2d3b3714b9",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "callback",
+          "queryId": "={{$json[\"callback_query\"][\"id\"]}}",
+          "additionalFields": {
+            "show_alert": false,
+            "text": "✅ Принято"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -1744,
+          208
+        ],
+        "id": "f1a767ba-0405-4fc6-9c43-93b135ef9317",
+        "name": "Answer Query a callback",
+        "webhookId": "e41d3612-334a-4ec7-a7f3-43c7374c54af",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "4ad45500-0ad7-4939-99fe-0ca8f830ee0e",
+                "name": "chat_id",
+                "value": "={{$json.callback_query.message.chat.id}}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -960,
+          -400
+        ],
+        "id": "3608051c-a0d9-4e95-8445-7aa32fb47075",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "mode": "combine",
+          "combineBy": "combineByPosition",
+          "options": {
+            "includeUnpaired": true
+          }
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          -704,
+          -384
+        ],
+        "id": "37c52be9-8d83-4047-b03e-e8f631f03cbb",
+        "name": "Merge"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.chat_id}}",
+          "text": "=✅ Задача создана: {{$json.html_url || '—'}}\n\n",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -496,
+          -336
+        ],
+        "id": "9498e679-3c48-4dc7-8f03-467847e0c491",
+        "name": "Send a text message1",
+        "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "f89ea19f-8bca-4a38-981d-b09da217a339",
+                "name": "html_url",
+                "value": "={{ $json.body?.html_url || $json.html_url || '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "includeOtherFields": true,
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -720,
+          -208
+        ],
+        "id": "c14826c2-4794-4255-bd39-f69c5c6ef1ca",
+        "name": "Pick link"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "c72bc0bb-bdcb-4bdf-81e3-2d404b935602",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "approve",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -1248,
+          -320
+        ],
+        "id": "b427ccb5-65f3-4c0b-91b7-826a08d1cedd",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $node[\"TG Callback\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"] }}\n",
+          "text": "={{$json.text || '—'}}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -544,
+          272
+        ],
+        "id": "38ff9d37-8201-4859-a467-886acedfdc69",
+        "name": "Send a text message",
+        "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"prompt\": \"Скажи коротко: агент подключён и отвечает?\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 60,\n  \"temperature\": 0.2\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -512,
+          0
+        ],
+        "id": "97dedee8-43ae-4aa5-b30e-4b2c0f2a8995",
+        "name": "LLM Request"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "5f0fd090-c46e-4576-9ec5-1192b5abe582",
+                "leftValue": "={{$json.callback_query.data}}",
+                "rightValue": "check_healthz",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -832,
+          16
+        ],
+        "id": "41845b22-5e83-4026-8dd8-5e50cee3f7da",
+        "name": "check_healthz"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.callback_query.message.chat.id}}",
+          "text": "❌ Действие отменено",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -896,
+          256
+        ],
+        "id": "70ee96e9-b67e-4672-a4bf-7fed46947a67",
+        "name": "Send reject message",
+        "webhookId": "e04ddb95-e8d0-4ea1-84e4-f61a81dc0284",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "8f09b834-e937-490c-ae18-a2b170225cc8",
+                "leftValue": "{{$json.callback_query.data}}",
+                "rightValue": "deploy",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -1536,
+          32
+        ],
+        "id": "02380a0c-e911-4e33-9ded-5e1bd113533e",
+        "name": "if_deploy"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/deploy_app",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Deploy-Secret",
+                "value": "CHANGE_ME_DEPLOY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"ref\": \"main\",\n  \"path\": \"~/agentcompany_sync\",\n  \"restart\": false\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1360,
+          -80
+        ],
+        "id": "5beb9939-1edf-4fec-a6b9-4243f5b5c001",
+        "name": "Deploy Request"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=Deploy: {{$json.ok ? \"ok\" : (\"fail: \" + ($json.error || \"неизвестно\"))}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -1216,
+          96
+        ],
+        "id": "22b48d7d-96e8-43bb-9e78-67c9054624c1",
+        "name": "Send deploy result",
+        "webhookId": "fd40ae4d-4eb1-4c6d-ac48-fa1bd50cc5b6",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Pick link",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG Callback": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Answer Query a callback",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_deploy",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Answer Query a callback": {
+        "main": [
+          []
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge": {
+        "main": [
+          [
+            {
+              "node": "Send a text message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a text message1": {
+        "main": [
+          []
+        ]
+      },
+      "Pick link": {
+        "main": [
+          [
+            {
+              "node": "Merge",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "check_healthz",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "check_healthz": {
+        "main": [
+          [
+            {
+              "node": "LLM Request",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send reject message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a text message": {
+        "main": [
+          []
+        ]
+      },
+      "if_deploy": {
+        "main": [
+          [
+            {
+              "node": "Deploy Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Deploy Request": {
+        "main": [
+          [
+            {
+              "node": "Send deploy result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "4d6e0542-6c84-4392-ab6e-625bae7bddc4",
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.673Z",
+        "updatedAt": "2025-08-28T17:29:31.673Z",
+        "role": "workflow:owner",
+        "workflowId": "RpzJDTQeC3d7MOUC",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-25T08:49:06.415Z",
+    "updatedAt": "2025-08-28T12:02:20.007Z",
+    "id": "SLcPh0mEKMvjSxJX",
+    "name": "Telegram Basic Reply",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {
+            "userIds": "1215909770"
+          }
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -96,
+          -64
+        ],
+        "id": "67341b4f-5338-4fc0-8d05-7c67217ce9a3",
+        "name": "Telegram Trigger1",
+        "webhookId": "aa5c38e7-a5dd-4850-80af-633ab5cbbed0",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "1215909770",
+          "text": "Привет, я тебя слышу 👋",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "✅ Одобрить",
+                      "additionalFields": {
+                        "callback_data": "approve"
+                      }
+                    },
+                    {
+                      "text": "Проверить агент /healthz",
+                      "additionalFields": {
+                        "callback_data": "check_healthz"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "❌ Отклонить",
+                      "additionalFields": {
+                        "callback_data": "reject"
+                      }
+                    },
+                    {
+                      "text": "🧠 Ask LLM",
+                      "additionalFields": {
+                        "callback_data": "ask"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "♻️ Deploy",
+                      "additionalFields": {
+                        "callback_data": "deploy"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          192,
+          -48
+        ],
+        "id": "dca6e414-9e88-47fd-83ed-e94a50edb4fa",
+        "name": "Send a text message",
+        "webhookId": "43a72859-9b3e-42f1-951f-b03a4ac12cb6",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Telegram Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "368297fb-7aa3-4400-8eff-71eaebda11dd",
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.714Z",
+        "updatedAt": "2025-08-28T17:29:31.714Z",
+        "role": "workflow:owner",
+        "workflowId": "SLcPh0mEKMvjSxJX",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-26T09:37:05.136Z",
+    "updatedAt": "2025-08-26T09:49:52.949Z",
+    "id": "VTCNAItjThUSXxzr",
+    "name": "agent_issue_test.",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.manualTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "0a646514-0f53-4aab-9d8d-12edc6e37b10",
+        "name": "When clicking ‘Execute workflow’"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://agent:80/create_issue",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"token\": \"YOUR_GITHUB_PAT_HERE\",\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: тест от n8n (manual)\",\n  \"body\": \"Создано из временного тестового воркфлоу\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "453de3dc-7185-48e6-9bac-97e51f1b14ef",
+        "name": "HTTP Request"
+      }
+    ],
+    "connections": {
+      "When clicking ‘Execute workflow’": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "3e32a1b5-a467-40c8-95cc-c6190d366138",
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.718Z",
+        "updatedAt": "2025-08-28T17:29:31.718Z",
+        "role": "workflow:owner",
+        "workflowId": "VTCNAItjThUSXxzr",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-28T12:44:54.593Z",
+    "updatedAt": "2025-08-28T12:44:54.593Z",
+    "id": "WfFxG31flRauzsUo",
+    "name": "My workflow",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {
+            "userIds": "1215909770"
+          }
+        },
+        "id": "680954e6-89d3-4434-b90c-1be9c5817591",
+        "name": "Telegram Trigger",
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          448,
+          -240
+        ],
+        "webhookId": "0dc596a9-f28e-455e-81df-21a7990de868",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.message.chat.id}}",
+          "text": "Привет, я тебя слышу 👋",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "✅ Одобрить",
+                      "additionalFields": {
+                        "callback_data": "approve"
+                      }
+                    },
+                    {
+                      "text": "🔍 Проверить агент /healthz",
+                      "additionalFields": {
+                        "callback_data": "check_healthz"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "❌ Отклонить",
+                      "additionalFields": {
+                        "callback_data": "reject"
+                      }
+                    },
+                    {
+                      "text": "🧠 Ask LLM",
+                      "additionalFields": {
+                        "callback_data": "ask"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "♻️ Deploy",
+                      "additionalFields": {
+                        "callback_data": "deploy"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {}
+        },
+        "id": "10e23466-febd-420e-83d3-08e2af519b66",
+        "name": "Send a text message",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          736,
+          -240
+        ],
+        "webhookId": "d28e0707-269f-4915-b4b2-d420dbfa860e",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "ab2eb99c-f432-4a85-9bb2-e031b54e4af7",
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.724Z",
+        "updatedAt": "2025-08-28T17:29:31.724Z",
+        "role": "workflow:owner",
+        "workflowId": "WfFxG31flRauzsUo",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-27T08:04:34.640Z",
+    "updatedAt": "2025-08-28T05:10:28.530Z",
+    "id": "neFeB5Q2uJpYiIWn",
+    "name": "Ask LLM",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "updates": [
+            "message"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "6647bf06-782e-4c2b-8be8-5d9f0cf54965",
+        "name": "Telegram Trigger",
+        "webhookId": "4d2ede33-5eae-4d74-9f8b-d2df6a6bab4b",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "e663f77e-5cff-4a4a-823b-6d1117ef93a2",
+                "leftValue": "={{$json[\"message\"][\"text\"]}}",
+                "rightValue": "^\\/ask\\s+.+",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "b2c86dec-f636-4a36-9013-ac4c84e194ab",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "debc97db-afd1-4e22-9fe0-e6ae57cc06a5",
+                "name": "chat_id",
+                "value": "={{$json.message.chat.id}}",
+                "type": "string"
+              },
+              {
+                "id": "ac5ad610-fbc6-459f-a10d-5e7cd59cc684",
+                "name": "prompt",
+                "value": "={{$json.message.text.replace(/^\\/ask\\s+/,'').trim()}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          416,
+          -96
+        ],
+        "id": "48bb05df-49fd-4b74-8398-a874a6fe33ea",
+        "name": "Extract"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"prompt\": \"={{$json.prompt}}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 300,\n  \"temperature\": 0.2\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          624,
+          -96
+        ],
+        "id": "50614362-9adc-41fe-9867-76c4b5cf0b20",
+        "name": "LLM Request"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $node[\"Telegram Trigger\"].json[\"message\"][\"chat\"][\"id\"] }}\n",
+          "text": "={{$json.text || '—'}}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          832,
+          -96
+        ],
+        "id": "a6eeae3b-b208-4832-9dd0-0793e1245fb4",
+        "name": "Send a text message",
+        "webhookId": "c02a716d-188a-4f43-a806-8e8453a64085",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.message.chat.id}}",
+          "text": "=Напиши: /ask твой вопрос",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          480,
+          160
+        ],
+        "id": "92a951ea-0856-41b5-8332-1cbded04c8bf",
+        "name": "Send a text message1",
+        "webhookId": "c02a716d-188a-4f43-a806-8e8453a64085",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Extract",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send a text message1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract": {
+        "main": [
+          [
+            {
+              "node": "LLM Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "3e78e005-9a34-493a-b4a1-8f35f058f40c",
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.730Z",
+        "updatedAt": "2025-08-28T17:29:31.730Z",
+        "role": "workflow:owner",
+        "workflowId": "neFeB5Q2uJpYiIWn",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-25T09:27:57.655Z",
+    "updatedAt": "2025-08-25T10:43:29.910Z",
+    "id": "pJxOmVJCifZK6f1u",
+    "name": "Agent Callback Handler",
+    "active": false,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "url": "https://agent.91.240.254.122.nip.io/healthz",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          208,
+          0
+        ],
+        "id": "636df9bf-4e84-4aa6-94e1-8969ca38409a",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$items(0,\"TG Callback\").json.callback_query.message.chat.id}}",
+          "text": "={{$items(0,\"TG Callback\").json.callback_query.message.chat.id}}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          416,
+          0
+        ],
+        "id": "906a9ba8-e0d1-4454-80ec-6fa161ee431f",
+        "name": "Send a text message",
+        "webhookId": "cd62b71a-ba94-4884-b851-09f4d3eb7ce8",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "updates": [
+            "callback_query"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          0
+        ],
+        "id": "f4042a3d-eb75-4cc0-8455-44bda873abf2",
+        "name": "TG Callback",
+        "webhookId": "3d4f6858-319b-465b-ab86-2f97931daab1",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "TG Callback": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": null,
+    "pinData": {},
+    "versionId": "fccf4597-17e8-4fa9-aedd-67e889bb09ab",
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-28T17:29:31.734Z",
+        "updatedAt": "2025-08-28T17:29:31.734Z",
+        "role": "workflow:owner",
+        "workflowId": "pJxOmVJCifZK6f1u",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-29T05:47:45.427Z",
+    "updatedAt": "2025-08-29T05:48:22.000Z",
+    "id": "CZlBSu3UPU0NFOuO",
+    "name": "My workflow 2",
+    "active": false,
+    "isArchived": true,
+    "nodes": [
+      {
+        "parameters": {},
+        "name": "TG Callback",
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          80,
+          528
+        ],
+        "id": "18050b1e-e145-4988-8185-ea05023fbeea",
+        "webhookId": "17f1e2d1-8a11-4e4f-9c7e-141bb171f574",
+        "credentials": {}
+      },
+      {
+        "parameters": {
+          "resource": "callback",
+          "queryId": "={{$json[\"callback_query\"]?.[\"id\"]}}",
+          "additionalFields": {
+            "show_alert": false,
+            "text": "✅ Принято"
+          }
+        },
+        "name": "Answer Query a callback",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          464,
+          560
+        ],
+        "id": "8682e5e9-1e8b-4458-9155-f29d7c74c90e",
+        "webhookId": "817febaa-a6b7-4296-9583-f79a5b044f50",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {},
+        "name": "if_start",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -16,
+          0
+        ],
+        "id": "e06bbd93-b039-4f64-83f4-3502341b6f5b"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.message.chat.id}}",
+          "text": "Привет, я тебя слышу 👋",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "✅ Одобрить",
+                      "additionalFields": {
+                        "callback_data": "approve"
+                      }
+                    },
+                    {
+                      "text": "🔍 Проверить агент /healthz",
+                      "additionalFields": {
+                        "callback_data": "check_healthz"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "❌ Отклонить",
+                      "additionalFields": {
+                        "callback_data": "reject"
+                      }
+                    },
+                    {
+                      "text": "🧠 Ask LLM",
+                      "additionalFields": {
+                        "callback_data": "ask"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "♻️ Deploy",
+                      "additionalFields": {
+                        "callback_data": "deploy"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {}
+        },
+        "name": "Send menu",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          272,
+          0
+        ],
+        "id": "59e3d417-2d3d-4ce9-944a-a8e79c9aaf85",
+        "webhookId": "edacc9d0-f67b-4433-9ec5-d9a1ea16512e",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_approve",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -32,
+          192
+        ],
+        "id": "d33ad20f-3ff2-49b3-9f96-8a6e3a08fa5a"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/create_issue",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: задача от агента\",\n  \"body\": \"Подтверждено кнопкой ✅ в Telegram\"\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Create Issue",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          272,
+          224
+        ],
+        "id": "04292315-c0af-4e79-b3d4-a73922915c35"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=✅ Задача создана: {{$json.body?.html_url || $json.html_url || \"—\"}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "name": "Send issue link",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          512,
+          224
+        ],
+        "id": "f8810afe-0eea-4783-b0d5-7d8ca4cf07e9",
+        "webhookId": "d8af76f1-a1d1-4426-8e3b-04230d5a15ad",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_check",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -32,
+          352
+        ],
+        "id": "046326a0-fabd-4555-8c3d-7039b3ff94a0"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"prompt\": \"Скажи коротко: агент подключён и отвечает?\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 60,\n  \"temperature\": 0.2\n}",
+          "options": {}
+        },
+        "name": "LLM Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          272,
+          400
+        ],
+        "id": "84615e95-3642-49e1-a5b2-aa6460c0360a"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$json.body?.text || $json.text || \"Ответ пустой\"}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "name": "Send LLM answer",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          512,
+          400
+        ],
+        "id": "6a6378df-72d9-4997-a271-7b5617c0fe02",
+        "webhookId": "4bb391f3-3aa9-4509-935f-3fa5d39e4783",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_deploy",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          80,
+          1040
+        ],
+        "id": "7e6a8583-64aa-4adc-973f-4f6f6811791e"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/deploy_app",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Deploy-Secret",
+                "value": "CHANGE_ME_DEPLOY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"ref\": \"main\",\n  \"path\": \"~/agentcompany_sync\",\n  \"restart\": false\n}",
+          "options": {}
+        },
+        "name": "Deploy Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          320,
+          1056
+        ],
+        "id": "d2380d1f-c8d6-47cc-b46f-e82870f68d7a"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=Deploy: {{$json.ok ? \"ok\" : (\"fail: \" + ($json.error || \"неизвестно\"))}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "name": "Send deploy result",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          624,
+          1024
+        ],
+        "id": "b461f086-2685-442a-a729-817db21caf60",
+        "webhookId": "3db2ee3b-72e0-4b09-9db6-2958fce6e142",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_reject",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          64,
+          1168
+        ],
+        "id": "6f992d1a-a4c1-465e-af87-282d07b13e25"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "❌ Действие отменено",
+          "additionalFields": {}
+        },
+        "name": "Send reject",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          672,
+          1168
+        ],
+        "id": "615888e8-3673-4a41-9a50-054b9241410d",
+        "webhookId": "bc3463b1-f63d-4c0e-82af-d2142a6541b5",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.callback_query.message.chat.id}}",
+          "text": "🧠 Напишите: /ask ваш вопрос",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          416,
+          720
+        ],
+        "id": "fd12310c-204d-44fd-87e3-7e6905e64c94",
+        "name": "Send ask hint",
+        "webhookId": "d9d4704d-7ba1-4d26-80f6-ff3bcbd39484",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          96,
+          784
+        ],
+        "id": "2bca23f3-6fd5-47fb-9a2c-f64dfcd96a07",
+        "name": "if_ask"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          112,
+          912
+        ],
+        "id": "901616a7-f153-44a0-ac95-6118f74e8e5a",
+        "name": "if_ask_text"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          288,
+          864
+        ],
+        "id": "7753d974-29e6-4eea-8459-e6143a56d941",
+        "name": "Extract prompt"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"prompt\": \"={{$json.prompt}}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 300,\n  \"temperature\": 0.2\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          464,
+          864
+        ],
+        "id": "7dbeb92d-9a02-4632-8bde-d9827a44b182",
+        "name": "LLM Request (ask)"
+      },
+      {
+        "parameters": {
+          "chatId": "{{$json.chat_id}",
+          "text": "={{$json.text || '—'}}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          640,
+          864
+        ],
+        "id": "df7c3b18-8f01-4ff9-8a2e-dd7df8a62dbb",
+        "name": "Send ask answer",
+        "webhookId": "4fecd81b-355c-43f0-8c51-450ceec08224",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Create Issue": {
+        "main": [
+          [
+            {
+              "node": "Send issue link",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request": {
+        "main": [
+          [
+            {
+              "node": "Send LLM answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Deploy Request": {
+        "main": [
+          [
+            {
+              "node": "Send deploy result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request (ask)": {
+        "main": [
+          [
+            {
+              "node": "Send ask answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "7bd9b1b2-9e8b-4a90-a176-8042881ec854",
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-29T05:47:45.436Z",
+        "updatedAt": "2025-08-29T05:47:45.436Z",
+        "role": "workflow:owner",
+        "workflowId": "CZlBSu3UPU0NFOuO",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-29T07:00:05.380Z",
+    "updatedAt": "2025-08-29T07:37:12.000Z",
+    "id": "5yTheE0Cjcmkwx5a",
+    "name": "Telegram Agent Callback (clean-108)",
+    "active": false,
+    "isArchived": true,
+    "nodes": [
+      {
+        "parameters": {},
+        "name": "TG Callback",
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -1216,
+          -48
+        ],
+        "id": "96409e12-dd92-4008-859f-3d1d9f6ed78b"
+      },
+      {
+        "parameters": {
+          "resource": "callback",
+          "queryId": "={{$json[\"callback_query\"]?.[\"id\"]}}",
+          "additionalFields": {
+            "show_alert": false,
+            "text": "✅ Принято"
+          }
+        },
+        "name": "Answer Query a callback",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -656,
+          192
+        ],
+        "id": "99bf9637-e1b8-4bef-a6af-2d0332c8e923",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {},
+        "name": "if_start",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          -288
+        ],
+        "id": "6f6daf0d-2efb-472a-8a34-8ef41fa8cd57"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.message.chat.id}}",
+          "text": "Привет, я тебя слышу 👋",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "✅ Одобрить",
+                      "additionalFields": {
+                        "callback_data": "approve"
+                      }
+                    },
+                    {
+                      "text": "🔍 Проверить агент /healthz",
+                      "additionalFields": {
+                        "callback_data": "check_healthz"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "❌ Отклонить",
+                      "additionalFields": {
+                        "callback_data": "reject"
+                      }
+                    },
+                    {
+                      "text": "🧠 Ask LLM",
+                      "additionalFields": {
+                        "callback_data": "ask"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "♻️ Deploy",
+                      "additionalFields": {
+                        "callback_data": "deploy"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {}
+        },
+        "name": "Send menu",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -448,
+          -288
+        ],
+        "id": "65f1dc35-51a8-40de-99cb-9e2b34c436ba",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_approve",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          -48
+        ],
+        "id": "3895b96a-3490-47b0-bea7-a2ac60179655"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/create_issue",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: задача от агента\",\n  \"body\": \"Подтверждено кнопкой ✅ в Telegram\"\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Create Issue",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -432,
+          -48
+        ],
+        "id": "01033bef-9981-4250-8228-8abcd2b5e16c"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=✅ Задача создана: {{$json.body?.html_url || $json.html_url || \"—\"}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "name": "Send issue link",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -192,
+          -48
+        ],
+        "id": "0d5ed374-2bd8-4c1e-a247-4f6692149e85",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_check",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -784,
+          80
+        ],
+        "id": "5cdd164a-014b-45f4-9448-a7c9a2bc0b1c"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"prompt\": \"Скажи коротко: агент подключён и отвечает?\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 60,\n  \"temperature\": 0.2\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "LLM Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -432,
+          128
+        ],
+        "id": "4c1f1fd0-a889-4024-af3d-9327206de447"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$json.body?.text || $json.text || \"Ответ пустой\"}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "name": "Send LLM answer",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -192,
+          128
+        ],
+        "id": "8b64cdef-1a03-4bc9-bd9a-ad5427786abd",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_ask",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          288
+        ],
+        "id": "6ffa5f3d-5972-461c-9d30-a4a5c1ca55e2"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.callback_query.message.chat.id}}",
+          "text": "🧠 Напишите: /ask ваш вопрос",
+          "additionalFields": {}
+        },
+        "name": "Send ask hint",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -432,
+          288
+        ],
+        "id": "646bfdbd-39fa-4d0a-a85c-ebe3f6235d7f",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_ask_text",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          448
+        ],
+        "id": "31900b08-7248-40da-8c02-8f6c671d5fe6"
+      },
+      {
+        "parameters": {
+          "keepOnlySet": true,
+          "values": {
+            "string": [
+              {
+                "name": "chat_id",
+                "value": "={{$json.message.chat.id}}"
+              },
+              {
+                "name": "prompt",
+                "value": "={{$json.message.text.replace(/^\\/ask\\s+/,'').trim()}}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "name": "Extract prompt",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          -560,
+          448
+        ],
+        "id": "5e38fc7e-2377-41df-8e2a-ba0ca2e208b6"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"prompt\": \"={{$json.prompt}}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 300,\n  \"temperature\": 0.2\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "LLM Request (ask)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -304,
+          448
+        ],
+        "id": "1c260d2e-fa98-4216-99ee-a29892f1ded8"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.chat_id}}",
+          "text": "={{$json.body?.text || $json.text || '—'}}",
+          "additionalFields": {}
+        },
+        "name": "Send ask answer",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -64,
+          448
+        ],
+        "id": "bb4ceecc-1670-43ee-8e07-da180af8e213",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_deploy",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          608
+        ],
+        "id": "4e7995b0-2e8b-4ed3-8ad4-25467554c425"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/deploy_app",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Deploy-Secret",
+                "value": "CHANGE_ME_DEPLOY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"ref\":\"main\",\"path\":\"~/agentcompany_sync\",\"restart\":false}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Deploy Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -432,
+          608
+        ],
+        "id": "50215ecb-158f-4f40-9510-1e1bd8abb1d8"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=Deploy: {{$json.ok ? \"ok\" : (\"fail: \" + ($json.error || \"неизвестно\"))}}",
+          "additionalFields": {},
+          "replyMarkup": "none"
+        },
+        "name": "Send deploy result",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -192,
+          608
+        ],
+        "id": "c6960e2f-4224-4f7b-9705-203e80109eb8",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "name": "if_reject",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -704,
+          768
+        ],
+        "id": "d0c4c088-8688-4622-8bf5-094e78a9039d"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "❌ Действие отменено",
+          "additionalFields": {}
+        },
+        "name": "Send reject",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -432,
+          768
+        ],
+        "id": "979ef29f-335e-41a5-835b-7aba3adbad4f",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "TG Callback": {
+        "main": [
+          [
+            {
+              "node": "Answer Query a callback",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_start",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_approve",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_check",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_ask",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_ask_text",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_deploy",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "if_reject",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_start": {
+        "main": [
+          [
+            {
+              "node": "Send menu",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "if_approve": {
+        "main": [
+          [
+            {
+              "node": "Create Issue",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Create Issue": {
+        "main": [
+          [
+            {
+              "node": "Send issue link",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_check": {
+        "main": [
+          [
+            {
+              "node": "LLM Request",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "LLM Request": {
+        "main": [
+          [
+            {
+              "node": "Send LLM answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_ask": {
+        "main": [
+          [
+            {
+              "node": "Send ask hint",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "if_ask_text": {
+        "main": [
+          [
+            {
+              "node": "Extract prompt",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Extract prompt": {
+        "main": [
+          [
+            {
+              "node": "LLM Request (ask)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request (ask)": {
+        "main": [
+          [
+            {
+              "node": "Send ask answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_deploy": {
+        "main": [
+          [
+            {
+              "node": "Deploy Request",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Deploy Request": {
+        "main": [
+          [
+            {
+              "node": "Send deploy result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_reject": {
+        "main": [
+          [
+            {
+              "node": "Send reject",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "eef3cd23-fb04-4164-a713-4143dbfdb0a3",
+    "triggerCount": 0,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-29T07:00:05.387Z",
+        "updatedAt": "2025-08-29T07:00:05.387Z",
+        "role": "workflow:owner",
+        "workflowId": "5yTheE0Cjcmkwx5a",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  },
+  {
+    "createdAt": "2025-08-29T08:06:33.457Z",
+    "updatedAt": "2025-08-31T16:36:50.000Z",
+    "id": "fdOsWLcXP8P3rrHL",
+    "name": "Telegram Agent Callback 2",
+    "active": true,
+    "isArchived": false,
+    "nodes": [
+      {
+        "parameters": {
+          "resource": "callback",
+          "queryId": "={{$json[\"callback_query\"]?.[\"id\"]}}",
+          "additionalFields": {
+            "show_alert": false,
+            "text": "✅ Принято"
+          }
+        },
+        "name": "Answer Query a callback",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -1680,
+          880
+        ],
+        "id": "53104f5a-8a71-4894-96f2-7347ba396056",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        },
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.message.chat.id}}",
+          "text": "Привет, я тебя слышу 👋",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "✅ Одобрить",
+                      "additionalFields": {
+                        "callback_data": "approve"
+                      }
+                    },
+                    {
+                      "text": "🔍 Проверить агент /healthz",
+                      "additionalFields": {
+                        "callback_data": "check_healthz"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "❌ Отклонить",
+                      "additionalFields": {
+                        "callback_data": "reject"
+                      }
+                    },
+                    {
+                      "text": "🧠 Ask LLM",
+                      "additionalFields": {
+                        "callback_data": "ask"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "♻️ Deploy",
+                      "additionalFields": {
+                        "callback_data": "deploy"
+                      }
+                    },
+                    {
+                      "text": "❓ Объясни",
+                      "additionalFields": {
+                        "callback_data": "explain_last"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {}
+        },
+        "name": "Send menu",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -1344,
+          -240
+        ],
+        "id": "bb26be83-bf03-4d4c-99bf-299fe5ca8d3e",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/create_issue",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: задача от агента\",\n  \"body\": \"Подтверждено кнопкой ✅ в Telegram\"\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Create Issue",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1344,
+          -80
+        ],
+        "id": "6e39a477-23ed-4cd6-b5cf-03af1fa136da"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=✅ Задача создана: {{$json.body?.html_url || $json.html_url || \"—\"}}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Send issue link",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -576,
+          -128
+        ],
+        "id": "d9ea3f1c-0f79-473f-8d7c-ecd808736c98",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"prompt\": \"Скажи коротко: агент подключён и отвечает?\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 60,\n  \"temperature\": 0.2\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "LLM Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1360,
+          96
+        ],
+        "id": "91d3eeac-c2f2-448e-b574-10f63abbdd52"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "={{$json.text}}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Send LLM answer",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -496,
+          48
+        ],
+        "id": "d56f5612-4657-47b7-889f-dd035d610ebe",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.callback_query.message.chat.id}}",
+          "text": "🧠 Напишите: /ask ваш вопрос",
+          "additionalFields": {}
+        },
+        "name": "Send ask hint",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -512,
+          208
+        ],
+        "id": "b875d9e3-a9e4-4ace-acba-73c49efe0072",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "keepOnlySet": true,
+          "values": {
+            "string": [
+              {
+                "name": "chat_id",
+                "value": "={{$json.message.chat.id}}"
+              },
+              {
+                "name": "prompt",
+                "value": "={{$json.message.text.replace(/^\\/ask\\s+/,'').trim()}}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "name": "Extract prompt",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 2,
+        "position": [
+          -1392,
+          304
+        ],
+        "id": "e422762c-08f4-41fa-aad6-dc417238b59f"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"prompt\": \"={{$json.prompt}}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 300,\n  \"temperature\": 0.2\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "LLM Request (ask)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1088,
+          352
+        ],
+        "id": "2f347963-0487-42fa-b2c8-2e44fa0282da"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.chat_id}}",
+          "text": "={{$json.text}}",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "❓ Объясни",
+                      "additionalFields": {
+                        "callback_data": "explain_last"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Send ask answer",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -128,
+          416
+        ],
+        "id": "03c56bfa-a571-4e27-af98-51394a85aaed",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/deploy_app",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-Deploy-Secret",
+                "value": "CHANGE_ME_DEPLOY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"ref\":\"main\",\"path\":\"~/agentcompany_sync\",\"restart\":false}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Deploy Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1392,
+          464
+        ],
+        "id": "f65fcc48-85c1-480a-8049-911a21ac2090"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
+          "text": "=Deploy: {{$json.ok ? \"ok\" : (\"fail: \" + ($json.error || \"неизвестно\"))}}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Send deploy result",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -224,
+          688
+        ],
+        "id": "d67f99d6-9177-43e7-9157-482a54be9549",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.chat_id}}",
+          "text": "={{$json.text}}",
+          "additionalFields": {
+            "parse_mode": ""
+          }
+        },
+        "name": "Send reject",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -864,
+          784
+        ],
+        "id": "81f371d2-4cef-4af8-b1ec-613fad62ae31",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "a1705f9a-74d2-4d18-bc31-ba35fdc804e6",
+                "leftValue": "={{$json.message?.text}}",
+                "rightValue": "/start",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1808,
+          -256
+        ],
+        "id": "c804ee16-0fb8-4654-ba24-83d548739d35",
+        "name": "if_start_new"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "ea4b57da-3514-4cab-bf8f-74f66d8ace6d",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "approve",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1824,
+          -96
+        ],
+        "id": "a0925a3c-312e-4962-a35d-022de29a443b",
+        "name": "if_approve_new"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "4eacd939-fd6a-4231-854d-cb3eea2ab85e",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "check_healthz",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1744,
+          48
+        ],
+        "id": "80cea499-9d3c-4684-8731-c3f36abc75cc",
+        "name": "if_check_new"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "e1a551dd-6562-4d5d-810f-fd6d5b0cd0f3",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "=ask",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1712,
+          176
+        ],
+        "id": "ed3f977e-8dee-46be-b74c-182beb43e86c",
+        "name": "if_ask_new"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "a641fc59-be54-49a9-a08a-3e19b99cc0d3",
+                "leftValue": "={{$json.message?.text}}",
+                "rightValue": "^\\/ask\\s+.+",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1680,
+          352
+        ],
+        "id": "c9ffb2fd-cf9e-4bc7-83c8-d6af7aa33289",
+        "name": "f_ask_text_new"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "0dde4747-e518-4479-921f-b2489912caaf",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "deploy",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1712,
+          448
+        ],
+        "id": "c1e7e2f7-aafd-476f-9330-c0cb404646d4",
+        "name": "if_deploy_new"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "ddef2cc3-f690-413f-b9a8-881bbe35157b",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "reject",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1696,
+          624
+        ],
+        "id": "fa01daf9-bc4d-4b16-b582-1a360747cbb4",
+        "name": "if_reject_new"
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message",
+            "callback_query"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.1,
+        "position": [
+          -2352,
+          -64
+        ],
+        "id": "ca827ebe-41bd-4aff-8033-c460d59f165f",
+        "name": "Telegram Trigger",
+        "webhookId": "74b26d08-763f-4842-9d28-b91070fb091c",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "b9a9539c-ce09-4941-982f-46bf3515e130",
+                "leftValue": "={{$json.message?.text}}",
+                "rightValue": "^\\/explain\\s+.+|^\\/ex\\s+.+",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1792,
+          -496
+        ],
+        "id": "9df5e9be-9706-4944-a37a-374edea6f750",
+        "name": "f_explain_text_new"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "b659887e-4bfd-4554-9927-6998b307ae6c",
+                "name": "chat_id",
+                "value": "={{$json.message.chat.id}}",
+                "type": "string"
+              },
+              {
+                "id": "5c9011d2-6020-4eec-81d4-3d8ee7f6e367",
+                "name": "term",
+                "value": "={{$json.message.text.replace(/^\\/explain\\s+/, '').replace(/^\\/ex\\s+/, '').trim() || 'PR'}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          -1360,
+          -352
+        ],
+        "id": "4f2d4b2f-d7d5-4ec1-881e-813c8958b8a9",
+        "name": "Extract term"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"prompt\": \"={{ 'Объясни простыми словами на русском термин: ' + $json.term + '\\\\nФормат:\\\\n1) Если коротко: …\\\\n2) Зачем это нужно: …\\\\n3) Что сделать сейчас: …\\\\n4) Пример: …' }}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 220,\n  \"temperature\": 0.2\n}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "LLM Request (explain)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1072,
+          -384
+        ],
+        "id": "6ca3e8f2-9911-4980-b555-af6e471608e5"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$json.chat_id}}",
+          "text": "={{$json.text}}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Send explain answer",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -256,
+          -432
+        ],
+        "id": "f4022be7-dddf-4e1c-8cd9-b74705f273b6",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "0733695a-b9e4-419c-8df0-921002519631",
+                "leftValue": "={{$json.callback_query?.data}}",
+                "rightValue": "explain_last",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1760,
+          -704
+        ],
+        "id": "f150a4c8-c57d-4cda-9429-f9e03a175eea",
+        "name": "if_explain_button"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "b659887e-4bfd-4554-9927-6998b307ae6c",
+                "name": "chat_id",
+                "value": "={{$json.callback_query.message.chat.id}}",
+                "type": "string"
+              },
+              {
+                "id": "5c9011d2-6020-4eec-81d4-3d8ee7f6e367",
+                "name": "term",
+                "value": "={{$json.callback_query.message.text || '—'}}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          -1360,
+          -576
+        ],
+        "id": "6bda3149-6b47-405a-9216-e49e615240f4",
+        "name": "Extract term (from button)"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "prompt",
+                "value": "={{$json.prompt}}"
+              },
+              {
+                "name": "model",
+                "value": "gpt-4o-mini"
+              },
+              {
+                "name": "max_tokens",
+                "value": "220"
+              },
+              {
+                "name": "temperature",
+                "value": "0.2"
+              }
+            ]
+          },
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "LLM Request (explain)1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -864,
+          -608
+        ],
+        "id": "8cf490af-3c99-446c-a0fc-ee29a501754c"
+      },
+      {
+        "parameters": {
+          "chatId": "={{$item(0).$node[\"Extract term (from button)\"].json[\"chat_id\"]}}",
+          "text": "={{$json.text}}",
+          "additionalFields": {
+            "parse_mode": "MarkdownV2"
+          }
+        },
+        "name": "Send explain answer1",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -288,
+          -640
+        ],
+        "id": "18a93b92-6085-455f-83e9-b7fe3f670a55",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "8b6267e6-8135-43bd-8447-bbb11b6c0689",
+                "name": "prompt",
+                "value": "={{ 'Объясни простыми словами на русском термин: '     + ($json.term || 'PR')    + '\\nФормат:\\n1) Если коротко: …\\n2) Зачем это нужно: …\\n3) Что сделать сейчас: …\\n4) Пример: …' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          -1152,
+          -576
+        ],
+        "id": "bc392aa7-840d-47d0-83ec-b56e15bd1413",
+        "name": "Build explain prompt (from button)"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = $json.text || $json.body?.text || $json.prompt || '';\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: out || esc(raw)  // на всякий случай — если распарсить не удалось\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -624,
+          -432
+        ],
+        "id": "eac93103-fc6e-4d54-a684-cdb9ce1b29ed",
+        "name": "mdv2_escape"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = $json.text || $json.body?.text || $json.prompt || '';\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: out || esc(raw)  // на всякий случай — если распарсить не удалось\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -624,
+          368
+        ],
+        "id": "0d96aae4-a6d8-4412-b183-134e391b6272",
+        "name": "mdv2_escape1"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = $json.text || $json.body?.text || $json.prompt || '';\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: out || esc(raw)  // на всякий случай — если распарсить не удалось\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -608,
+          -656
+        ],
+        "id": "0a73b806-7832-4789-964d-c9429b843815",
+        "name": "mdv2_escape2"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = $json.text || $json.body?.text || $json.prompt || '';\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: out || esc(raw)  // на всякий случай — если распарсить не удалось\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1088,
+          592
+        ],
+        "id": "43fe37c0-d265-4fd3-8db1-be74019deaa8",
+        "name": "mdv2_escape3"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = $json.text || $json.body?.text || $json.prompt || '';\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: out || esc(raw)  // на всякий случай — если распарсить не удалось\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -992,
+          -112
+        ],
+        "id": "42a194ec-978e-497a-8a97-6b9f8c85f16b",
+        "name": "mdv2_escape4"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = $json.text || $json.body?.text || $json.prompt || '';\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: out || esc(raw)  // на всякий случай — если распарсить не удалось\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1024,
+          112
+        ],
+        "id": "48ad3d68-de7e-4b1d-8389-38e8169a23bc",
+        "name": "mdv2_escape_check"
+      },
+      {
+        "parameters": {
+          "jsCode": "// mdv2_format_explain\nconst esc = s => String(s||'').replace(/([_*[\\]()~`>#+\\-=|{}.!\\\\])/g,'\\\\$1');\n\nconst raw = ($json.text || $json.body?.text || $json.prompt || '❌ Действие отменено');\nconst grab = (label) => {\n  const re = new RegExp(String.raw`${label}\\s*:\\s*([\\s\\S]*?)(?=\\n\\s*\\d\\)\\s*|$)`, 'i');\n  const m = raw.match(re);\n  return m ? m[1].trim() : '';\n};\n\nconst s1 = grab('1\\\\)\\\\s*Если коротко');\nconst s2 = grab('2\\\\)\\\\s*Зачем это нужно');\nconst s3 = grab('3\\\\)\\\\s*Что сделать сейчас');\nconst s4 = grab('4\\\\)\\\\s*Пример');\n\nlet out = '';\nif (s1) out += `*Если коротко:* ${esc(s1)}\\n\\n`;\nif (s2) out += `*Зачем это нужно:* ${esc(s2)}\\n\\n`;\nif (s3) out += `*Что сделать сейчас:* ${esc(s3)}\\n\\n`;\nif (s4) out += `*Пример:* ${esc(s4)}\\n`;\n\nreturn [{\n  chat_id: $json.chat_id || $json.message?.chat?.id || $json.callback_query?.message?.chat?.id,\n  text: '❌ Действие отменено'\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1232,
+          800
+        ],
+        "id": "ba282e2e-5fad-4d91-818c-76ed7582408b",
+        "name": "mdv2_escape_reject"
+      }
+    ],
+    "connections": {
+      "Create Issue": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape_check",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract prompt": {
+        "main": [
+          [
+            {
+              "node": "LLM Request (ask)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request (ask)": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Deploy Request": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_start_new": {
+        "main": [
+          [
+            {
+              "node": "Send menu",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_approve_new": {
+        "main": [
+          [
+            {
+              "node": "Create Issue",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_check_new": {
+        "main": [
+          [
+            {
+              "node": "LLM Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_ask_new": {
+        "main": [
+          [
+            {
+              "node": "Send ask hint",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "f_ask_text_new": {
+        "main": [
+          [
+            {
+              "node": "Extract prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_deploy_new": {
+        "main": [
+          [
+            {
+              "node": "Deploy Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_reject_new": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape_reject",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Telegram Trigger": {
+        "main": [
+          [
+            {
+              "node": "if_start_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_approve_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_check_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_ask_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "f_ask_text_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_deploy_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_reject_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Answer Query a callback",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "f_explain_text_new",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "if_explain_button",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "f_explain_text_new": {
+        "main": [
+          [
+            {
+              "node": "Extract term",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract term": {
+        "main": [
+          [
+            {
+              "node": "LLM Request (explain)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request (explain)": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_explain_button": {
+        "main": [
+          [
+            {
+              "node": "Extract term (from button)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract term (from button)": {
+        "main": [
+          [
+            {
+              "node": "Build explain prompt (from button)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "LLM Request (explain)1": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build explain prompt (from button)": {
+        "main": [
+          [
+            {
+              "node": "LLM Request (explain)1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Answer Query a callback": {
+        "main": [
+          []
+        ]
+      },
+      "mdv2_escape": {
+        "main": [
+          [
+            {
+              "node": "Send explain answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mdv2_escape1": {
+        "main": [
+          [
+            {
+              "node": "Send ask answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mdv2_escape2": {
+        "main": [
+          [
+            {
+              "node": "Send explain answer1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mdv2_escape3": {
+        "main": [
+          [
+            {
+              "node": "Send deploy result",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mdv2_escape4": {
+        "main": [
+          [
+            {
+              "node": "Send issue link",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "mdv2_escape_check": {
+        "main": [
+          [
+            {
+              "node": "Send LLM answer",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send ask answer": {
+        "main": [
+          []
+        ]
+      },
+      "mdv2_escape_reject": {
+        "main": [
+          [
+            {
+              "node": "Send reject",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "settings": {
+      "executionOrder": "v1"
+    },
+    "staticData": null,
+    "meta": {
+      "templateCredsSetupCompleted": true
+    },
+    "pinData": {},
+    "versionId": "4ac25f4d-f2c8-4812-aca4-7f47f3542712",
+    "triggerCount": 1,
+    "tags": [],
+    "shared": [
+      {
+        "createdAt": "2025-08-29T08:06:33.462Z",
+        "updatedAt": "2025-08-29T08:06:33.462Z",
+        "role": "workflow:owner",
+        "workflowId": "fdOsWLcXP8P3rrHL",
+        "projectId": "aUae1EIcRNyEyXTv",
+        "project": {
+          "createdAt": "2025-08-29T04:56:44.687Z",
+          "updatedAt": "2025-08-29T04:56:44.687Z",
+          "id": "aUae1EIcRNyEyXTv",
+          "name": "aleksey kosenkov <azon_ooo@mail.ru>",
+          "type": "personal",
+          "icon": null,
+          "description": null
+        }
+      }
+    ]
+  }
+]
