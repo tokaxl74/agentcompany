@@ -2682,7 +2682,7 @@
   },
   {
     "createdAt": "2025-08-29T08:06:33.457Z",
-    "updatedAt": "2025-08-31T16:36:50.000Z",
+    "updatedAt": "2025-09-02T09:24:24.000Z",
     "id": "fdOsWLcXP8P3rrHL",
     "name": "Telegram Agent Callback 2",
     "active": true,
@@ -2705,6 +2705,7 @@
           880
         ],
         "id": "53104f5a-8a71-4894-96f2-7347ba396056",
+        "webhookId": "a20b72d9-e35c-4063-879b-796faa77487b",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -2773,6 +2774,18 @@
                     }
                   ]
                 }
+              },
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "♻ Deploy agentcompany",
+                      "additionalFields": {
+                        "callback_data": "deploy_agentcompany"
+                      }
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -2786,6 +2799,7 @@
           -240
         ],
         "id": "bb26be83-bf03-4d4c-99bf-299fe5ca8d3e",
+        "webhookId": "a5c32fba-527d-4c53-ad05-134adde96c39",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -2796,19 +2810,23 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "https://agent.91.240.254.122.nip.io/create_issue",
+          "url": "http://agent:8000/create_issue",
           "sendHeaders": true,
           "headerParameters": {
             "parameters": [
               {
                 "name": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
               }
             ]
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "{\n  \"repo_full_name\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: задача от агента\",\n  \"body\": \"Подтверждено кнопкой ✅ в Telegram\"\n}",
+          "jsonBody": "{\n  \"repo\": \"tokaxl74/agentcompany\",\n  \"title\": \"Approve: подтверждено\",\n  \"body\": \"Одобрено через Telegram\",\n  \"labels\": [\"approve\",\"telegram\"]\n}",
           "options": {
             "response": {
               "response": {
@@ -2829,9 +2847,9 @@
       {
         "parameters": {
           "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
-          "text": "=✅ Задача создана: {{$json.body?.html_url || $json.html_url || \"—\"}}",
+          "text": "=✅ Задача создана: <a href=\"{{$node[\"Create Issue\"].json[\"url\"]}}\">{{$node[\"Create Issue\"].json[\"url\"]}}</a>",
           "additionalFields": {
-            "parse_mode": "MarkdownV2"
+            "parse_mode": "HTML"
           }
         },
         "name": "Send issue link",
@@ -2842,6 +2860,7 @@
           -128
         ],
         "id": "d9ea3f1c-0f79-473f-8d7c-ecd808736c98",
+        "webhookId": "008f6bb4-ed6d-4073-8dd4-8ea24b1b2bbb",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -2851,43 +2870,10 @@
       },
       {
         "parameters": {
-          "method": "POST",
-          "url": "https://agent.91.240.254.122.nip.io/gen_text",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "{\n  \"prompt\": \"Скажи коротко: агент подключён и отвечает?\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 60,\n  \"temperature\": 0.2\n}",
-          "options": {
-            "response": {
-              "response": {
-                "responseFormat": "json"
-              }
-            }
-          }
-        },
-        "name": "LLM Request",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          -1360,
-          96
-        ],
-        "id": "91d3eeac-c2f2-448e-b574-10f63abbdd52"
-      },
-      {
-        "parameters": {
           "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
-          "text": "={{$json.text}}",
+          "text": "=🩺 healthz: {{$node[\"Healthz Request\"].json[\"status\"]}}",
           "additionalFields": {
-            "parse_mode": "MarkdownV2"
+            "parse_mode": "HTML"
           }
         },
         "name": "Send LLM answer",
@@ -2898,6 +2884,7 @@
           48
         ],
         "id": "d56f5612-4657-47b7-889f-dd035d610ebe",
+        "webhookId": "b9d11fd3-42e5-4f6f-944a-124eaa372327",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -2907,18 +2894,19 @@
       },
       {
         "parameters": {
-          "chatId": "={{$json.callback_query.message.chat.id}}",
-          "text": "🧠 Напишите: /ask ваш вопрос",
+          "chatId": "={{ $node[\"Telegram Trigger\"].json.callback_query    ? $node[\"Telegram Trigger\"].json.callback_query.message.chat.id    : $node[\"Telegram Trigger\"].json.message.chat.id }}",
+          "text": "=🧠 {{$node[\"Ask Request\"].json[\"text\"]}}",
           "additionalFields": {}
         },
         "name": "Send ask hint",
         "type": "n8n-nodes-base.telegram",
         "typeVersion": 1.2,
         "position": [
-          -512,
+          -560,
           208
         ],
         "id": "b875d9e3-a9e4-4ace-acba-73c49efe0072",
+        "webhookId": "584903dd-4325-4f0a-8980-1ead41f61d0f",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -2955,19 +2943,23 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "url": "http://agent:8000/gen_text",
           "sendHeaders": true,
           "headerParameters": {
             "parameters": [
               {
                 "name": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
               }
             ]
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "{\n  \"prompt\": \"={{$json.prompt}}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 300,\n  \"temperature\": 0.2\n}",
+          "jsonBody": "{ \"prompt\": \"{{$json[\\\"text\\\"]}}\" }",
           "options": {
             "response": {
               "response": {
@@ -2988,7 +2980,7 @@
       {
         "parameters": {
           "chatId": "={{$json.chat_id}}",
-          "text": "={{$json.text}}",
+          "text": "=🧠 {{$node[\"LLM Request (ask)\"].json[\"text\"]}}",
           "replyMarkup": "inlineKeyboard",
           "inlineKeyboard": {
             "rows": [
@@ -3007,17 +2999,18 @@
             ]
           },
           "additionalFields": {
-            "parse_mode": "MarkdownV2"
+            "parse_mode": "HTML"
           }
         },
         "name": "Send ask answer",
         "type": "n8n-nodes-base.telegram",
         "typeVersion": 1.2,
         "position": [
-          -128,
-          416
+          -480,
+          384
         ],
         "id": "03c56bfa-a571-4e27-af98-51394a85aaed",
+        "webhookId": "b20bee13-8b4b-41bc-86c6-decdf54989fe",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -3028,7 +3021,7 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "https://agent.91.240.254.122.nip.io/deploy_app",
+          "url": "http://agent:8000/deploy_app",
           "sendHeaders": true,
           "headerParameters": {
             "parameters": [
@@ -3037,14 +3030,14 @@
                 "value": "application/json"
               },
               {
-                "name": "X-Deploy-Secret",
-                "value": "CHANGE_ME_DEPLOY_123"
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
               }
             ]
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "{\"ref\":\"main\",\"path\":\"~/agentcompany_sync\",\"restart\":false}",
+          "jsonBody": "{ \"stack\": \"agentcompany\", \"pull\": true }",
           "options": {
             "response": {
               "response": {
@@ -3065,19 +3058,20 @@
       {
         "parameters": {
           "chatId": "={{$item(0).$node[\"Telegram Trigger\"].json[\"callback_query\"][\"message\"][\"chat\"][\"id\"]}}",
-          "text": "=Deploy: {{$json.ok ? \"ok\" : (\"fail: \" + ($json.error || \"неизвестно\"))}}",
+          "text": "=♻ Deploy: {{$node[\"Deploy Request\"].json[\"status\"]}}\n{{ $node[\"Deploy Request\"].json[\"summary\"] }}",
           "additionalFields": {
-            "parse_mode": "MarkdownV2"
+            "parse_mode": "HTML"
           }
         },
         "name": "Send deploy result",
         "type": "n8n-nodes-base.telegram",
         "typeVersion": 1.2,
         "position": [
-          -224,
-          688
+          -672,
+          576
         ],
         "id": "d67f99d6-9177-43e7-9157-482a54be9549",
+        "webhookId": "308a5b65-fc04-45c6-a35a-317855840810",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -3087,20 +3081,21 @@
       },
       {
         "parameters": {
-          "chatId": "={{$json.chat_id}}",
-          "text": "={{$json.text}}",
+          "chatId": "={{ $node[\"Telegram Trigger\"].json.callback_query\n    ? $node[\"Telegram Trigger\"].json.callback_query.message.chat.id\n    : $node[\"Telegram Trigger\"].json.message.chat.id }}",
+          "text": "=❌ PR закрыт: {{$node[\"Reject Request\"].json[\"result\"][\"html_url\"]}}",
           "additionalFields": {
-            "parse_mode": ""
+            "parse_mode": "HTML"
           }
         },
         "name": "Send reject",
         "type": "n8n-nodes-base.telegram",
         "typeVersion": 1.2,
         "position": [
-          -864,
+          -656,
           784
         ],
         "id": "81f371d2-4cef-4af8-b1ec-613fad62ae31",
+        "webhookId": "227501c1-1b8e-4170-88ce-2377454d04ef",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -3242,39 +3237,6 @@
         ],
         "id": "ed3f977e-8dee-46be-b74c-182beb43e86c",
         "name": "if_ask_new"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 1
-            },
-            "conditions": [
-              {
-                "id": "a641fc59-be54-49a9-a08a-3e19b99cc0d3",
-                "leftValue": "={{$json.message?.text}}",
-                "rightValue": "^\\/ask\\s+.+",
-                "operator": {
-                  "type": "string",
-                  "operation": "regex"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2,
-        "position": [
-          -1680,
-          352
-        ],
-        "id": "c9ffb2fd-cf9e-4bc7-83c8-d6af7aa33289",
-        "name": "f_ask_text_new"
       },
       {
         "parameters": {
@@ -3433,19 +3395,23 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "url": "http://agent:8000/gen_text",
           "sendHeaders": true,
           "headerParameters": {
             "parameters": [
               {
                 "name": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
               }
             ]
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"prompt\": \"={{ 'Объясни простыми словами на русском термин: ' + $json.term + '\\\\nФормат:\\\\n1) Если коротко: …\\\\n2) Зачем это нужно: …\\\\n3) Что сделать сейчас: …\\\\n4) Пример: …' }}\",\n  \"model\": \"gpt-4o-mini\",\n  \"max_tokens\": 220,\n  \"temperature\": 0.2\n}",
+          "jsonBody": "={ \"prompt\": \"{{$json[\\\"text\\\"] || \\\"Объясни что-нибудь\\\"}}\" }",
           "options": {
             "response": {
               "response": {
@@ -3465,10 +3431,10 @@
       },
       {
         "parameters": {
-          "chatId": "={{$json.chat_id}}",
-          "text": "={{$json.text}}",
+          "chatId": "={{ $node[\"Telegram Trigger\"].json.callback_query\n    ? $node[\"Telegram Trigger\"].json.callback_query.message.chat.id\n    : $node[\"Telegram Trigger\"].json.message.chat.id }}",
+          "text": "=❓ {{$node[\"LLM Request (explain)\"].json[\"text\"]}}",
           "additionalFields": {
-            "parse_mode": "MarkdownV2"
+            "parse_mode": "HTML"
           }
         },
         "name": "Send explain answer",
@@ -3479,6 +3445,7 @@
           -432
         ],
         "id": "f4022be7-dddf-4e1c-8cd9-b74705f273b6",
+        "webhookId": "c54b290b-38f2-43f2-88c3-d0c8b5b1c5db",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -3552,37 +3519,23 @@
       {
         "parameters": {
           "method": "POST",
-          "url": "https://agent.91.240.254.122.nip.io/gen_text",
+          "url": "http://agent:8000/gen_text",
           "sendHeaders": true,
           "headerParameters": {
             "parameters": [
               {
                 "name": "Content-Type",
                 "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
               }
             ]
           },
           "sendBody": true,
-          "bodyParameters": {
-            "parameters": [
-              {
-                "name": "prompt",
-                "value": "={{$json.prompt}}"
-              },
-              {
-                "name": "model",
-                "value": "gpt-4o-mini"
-              },
-              {
-                "name": "max_tokens",
-                "value": "220"
-              },
-              {
-                "name": "temperature",
-                "value": "0.2"
-              }
-            ]
-          },
+          "specifyBody": "json",
+          "jsonBody": "={{ { \"prompt\": $json.prompt || \"объясни коротко\" } }}",
           "options": {
             "response": {
               "response": {
@@ -3603,9 +3556,9 @@
       {
         "parameters": {
           "chatId": "={{$item(0).$node[\"Extract term (from button)\"].json[\"chat_id\"]}}",
-          "text": "={{$json.text}}",
+          "text": "=❓ {{$node[\"LLM Request (explain)1\"].json[\"text\"]}}",
           "additionalFields": {
-            "parse_mode": "MarkdownV2"
+            "parse_mode": "HTML"
           }
         },
         "name": "Send explain answer1",
@@ -3616,6 +3569,7 @@
           -640
         ],
         "id": "18a93b92-6085-455f-83e9-b7fe3f670a55",
+        "webhookId": "8374d995-a197-46a4-924f-225d6ef9a2fd",
         "credentials": {
           "telegramApi": {
             "id": "8XrcCQ9RkaaNskVo",
@@ -3666,8 +3620,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -624,
-          368
+          -736,
+          352
         ],
         "id": "0d96aae4-a6d8-4412-b183-134e391b6272",
         "name": "mdv2_escape1"
@@ -3731,11 +3685,221 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          -1232,
+          -1024,
           800
         ],
         "id": "ba282e2e-5fad-4d91-818c-76ed7582408b",
         "name": "mdv2_escape_reject"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://agent:8000/pr_action",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{ \"repo\": \"tokaxl74/agentcompany\", \"number\": 44, \"action\": \"close\" }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1408,
+          624
+        ],
+        "id": "70d32c73-d8fa-4b3d-b22a-a447f05b37c2",
+        "name": "Reject Request"
+      },
+      {
+        "parameters": {
+          "url": "http://agent:8000/healthz",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Healthz Request",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1296,
+          80
+        ],
+        "id": "91d3eeac-c2f2-448e-b574-10f63abbdd52"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "a641fc59-be54-49a9-a08a-3e19b99cc0d3",
+                "leftValue": "={{$json.message?.text}}",
+                "rightValue": "^\\/ask\\s+.+",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -1680,
+          320
+        ],
+        "id": "c9ffb2fd-cf9e-4bc7-83c8-d6af7aa33289",
+        "name": "if_ask_text_new"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://agent:8000/gen_text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{ \"prompt\": \"тестовый вопрос с кнопки Ask\" }",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1424,
+          176
+        ],
+        "id": "4f19a783-41b8-4bb5-b7a9-ffcdd83d2771",
+        "name": "Ask Request"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "0dde4747-e518-4479-921f-b2489912caaf",
+                "leftValue": "={{$json[\"callback_query\"] ? $json[\"callback_query\"][\"data\"] : \"\"}}",
+                "rightValue": "deploy_agentcompany",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          -2080,
+          1152
+        ],
+        "id": "5d3f7e35-a535-436d-931c-c39389493cb2",
+        "name": "IF deploy agentcompany"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://agent:8000/deploy_app",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "X-API-KEY",
+                "value": "CHANGE_ME_AGENT_KEY_123"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\"project\":\"agentcompany\",\"pull\":true}",
+          "options": {
+            "response": {
+              "response": {
+                "responseFormat": "json"
+              }
+            }
+          }
+        },
+        "name": "Deploy agentcompany",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1760,
+          1168
+        ],
+        "id": "73076cac-1567-458a-a280-f26141648a8a"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $node[\"Telegram Trigger\"].json.callback_query     ? $node[\"Telegram Trigger\"].json.callback_query.message.chat.id     : $node[\"Telegram Trigger\"].json.message.chat.id }}",
+          "text": "=♻ Deploy agentcompany: {{$json.status}}\n<pre>{{$json.summary}}</pre>",
+          "additionalFields": {
+            "parse_mode": "HTML"
+          }
+        },
+        "name": "Send deploy agentcompany",
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          -1040,
+          1280
+        ],
+        "id": "02a32939-6806-40df-a49f-036070303f74",
+        "webhookId": "308a5b65-fc04-45c6-a35a-317855840810",
+        "credentials": {
+          "telegramApi": {
+            "id": "8XrcCQ9RkaaNskVo",
+            "name": "Telegram account"
+          }
+        }
       }
     ],
     "connections": {
@@ -3744,17 +3908,6 @@
           [
             {
               "node": "mdv2_escape4",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "LLM Request": {
-        "main": [
-          [
-            {
-              "node": "mdv2_escape_check",
               "type": "main",
               "index": 0
             }
@@ -3820,7 +3973,7 @@
         "main": [
           [
             {
-              "node": "LLM Request",
+              "node": "Healthz Request",
               "type": "main",
               "index": 0
             }
@@ -3831,18 +3984,7 @@
         "main": [
           [
             {
-              "node": "Send ask hint",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "f_ask_text_new": {
-        "main": [
-          [
-            {
-              "node": "Extract prompt",
+              "node": "Ask Request",
               "type": "main",
               "index": 0
             }
@@ -3864,7 +4006,7 @@
         "main": [
           [
             {
-              "node": "mdv2_escape_reject",
+              "node": "Reject Request",
               "type": "main",
               "index": 0
             }
@@ -3895,7 +4037,7 @@
               "index": 0
             },
             {
-              "node": "f_ask_text_new",
+              "node": "if_ask_text_new",
               "type": "main",
               "index": 0
             },
@@ -3921,6 +4063,11 @@
             },
             {
               "node": "if_explain_button",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "IF deploy agentcompany",
               "type": "main",
               "index": 0
             }
@@ -4090,6 +4237,72 @@
             }
           ]
         ]
+      },
+      "Reject Request": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape_reject",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Healthz Request": {
+        "main": [
+          [
+            {
+              "node": "mdv2_escape_check",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "if_ask_text_new": {
+        "main": [
+          [
+            {
+              "node": "Extract prompt",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Ask Request": {
+        "main": [
+          [
+            {
+              "node": "Send ask hint",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF deploy agentcompany": {
+        "main": [
+          [
+            {
+              "node": "Deploy agentcompany",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Deploy agentcompany": {
+        "main": [
+          [
+            {
+              "node": "Send deploy agentcompany",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "settings": {
@@ -4100,7 +4313,7 @@
       "templateCredsSetupCompleted": true
     },
     "pinData": {},
-    "versionId": "4ac25f4d-f2c8-4812-aca4-7f47f3542712",
+    "versionId": "a7373fc7-b51b-43fb-a4f6-17076eee2fe7",
     "triggerCount": 1,
     "tags": [],
     "shared": [
