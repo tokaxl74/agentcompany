@@ -1,0 +1,74 @@
+from fastapi import APIRouter, Header, HTTPException, Query
+from typing import Optional, Dict, Any, List
+import os, sqlite3, json, time
+
+DB_PATH = "/app/data/agent_memory.sqlite"
+os.makedirs("/app/data", exist_ok=True)
+
+def _db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute("PRAGMA journal_mode=WAL;")
+    return conn
+
+# Инициализация таблиц
+with _db() as c:
+    c.execute("""CREATE TABLE IF NOT EXISTS agent_memory (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts TEXT DEFAULT (datetime('now')),
+        project TEXT,
+        kind TEXT,
+        text TEXT,
+        meta TEXT
+    )""")
+    c.execute("""CREATE TABLE IF NOT EXISTS agent_feedback (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        ts TEXT DEFAULT (datetime('now')),
+        workflow TEXT,
+        node TEXT,
+        status TEXT,
+        error TEXT
+    )""")
+
+router = APIRouter()
+
+def _auth(x_api_key: Optional[str] = Header(default=None, alias="X-API-KEY")):
+    if not x_api_key:
+        raise HTTPException(status_code=401, detail="Missing X-API-KEY")
+    return True
+
+@router.post("/memory/add")
+def memory_add(payload: Dict[str, Any], x_ok: bool = _auth()):
+    project = str(payload.get("project","")).strip() or "default"
+    kind    = str(payload.get("kind","note")).strip()
+    text    = str(payload.get("text","")).strip()
+    meta    = payload.get("meta", {})
+    with _db() as c:
+        c.execute("INSERT INTO agent_memory(project,kind,text,meta) VALUES(?,?,?,?)",
+                  (project, kind, text, json.dumps(meta, ensure_ascii=False)))
+        rowid = c.execute("SELECT last_insert_rowid()").fetchone()[0]
+    return {"ok": True, "id": rowid}
+
+@router.get("/memory/search")
+def memory_search(q: str = Query(""), project: str = Query(""), limit: int = Query(20, ge=1, le=200), x_ok: bool = _auth()):
+    q = f"%{q}%"
+    with _db() as c:
+        rows = c.execute(
+            "SELECT id, ts, project, kind, text, meta FROM agent_memory "
+            "WHERE (project = ? OR ? = "") AND (text LIKE ? OR meta LIKE ?) ORDER BY id DESC LIMIT ?",
+            (project, project, q, q, limit)
+        ).fetchall()
+    out = [{"id":r[0], "ts":r[1], "project":r[2], "kind":r[3], "text":r[4],
+            "meta": (json.loads(r[5]) if r[5] else {})} for r in rows]
+    return {"ok": True, "items": out}
+
+@router.post("/feedback")
+def feedback(payload: Dict[str, Any], x_ok: bool = _auth()):
+    workflow = str(payload.get("workflow","")).strip()
+    node     = str(payload.get("node","")).strip()
+    status   = str(payload.get("status","")).strip() or "unknown"
+    error    = str(payload.get("error","")).strip()
+    with _db() as c:
+        c.execute("INSERT INTO agent_feedback(workflow,node,status,error) VALUES(?,?,?,?)",
+                  (workflow, node, status, error))
+        rowid = c.execute("SELECT last_insert_rowid()").fetchone()[0]
+    return {"ok": True, "id": rowid}
